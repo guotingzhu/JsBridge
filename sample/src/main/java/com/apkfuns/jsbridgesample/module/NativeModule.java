@@ -15,6 +15,7 @@ import com.apkfuns.jsbridge.module.JBCallback;
 import com.apkfuns.jsbridge.module.JSBridgeMethod;
 import com.apkfuns.jsbridge.module.JsModule;
 import com.apkfuns.jsbridgesample.R;
+import com.apkfuns.jsbridgesample.util.BitmapUtil;
 import com.apkfuns.jsbridgesample.view.CustomFragmentActivity;
 import com.apkfuns.jsbridgesample.view.base.BaseActivity;
 import com.apkfuns.jsbridgesample.util.TakePhotoResult;
@@ -124,7 +125,7 @@ public class NativeModule extends JsModule {
                 public void onSuccess(Bitmap bitmap) {
                     if (bitmap != null) {
                         if (success != null) {
-                            String base64 = bitmapToBase64(bitmap);
+                            String base64 = BitmapUtil.bitmapToBase64(bitmap);
                             base64 = "data:image/png;base64," + base64;
                             Toast.makeText(mContext, "length=" + base64.length(), Toast.LENGTH_SHORT).show();
                             success.apply(base64);
@@ -146,39 +147,5 @@ public class NativeModule extends JsModule {
         }
     }
 
-    /**
-     * 压缩并 转 base64
-     * @param bitmap
-     * @return
-     */
-    public static String bitmapToBase64(Bitmap bitmap) {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        int quality = 10;
-        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, bos);
-        byte[] bytes = bos.toByteArray();
-        bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-        String result = null;
-        try {
-            if (bitmap != null) {
-                bos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-                bos.flush();
-                bos.close();
-                byte[] bitmapBytes = bos.toByteArray();
-                result = Base64.encodeToString(bitmapBytes, Base64.DEFAULT);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (bos != null) {
-                    bos.flush();
-                    bos.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return result;
-    }
+
 }
